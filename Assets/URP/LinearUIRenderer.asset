@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Active: 1
   settings:
-    renderPassEvent: 500
+    renderPassEvent: 600
     material: {fileID: 2100000, guid: 5d97107a531124ca482dc545468c85f7, type: 2}
 --- !u!114 &-235892981240890162
 MonoBehaviour:
@@ -31,7 +31,7 @@ MonoBehaviour:
   m_Active: 1
   settings:
     customRenderTargetName: _UITexture
-    renderPassEvent: 500
+    renderPassEvent: 600
     layerMask:
       serializedVersion: 2
       m_Bits: 32
