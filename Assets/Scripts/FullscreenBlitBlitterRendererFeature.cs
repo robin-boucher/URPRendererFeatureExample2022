@@ -106,9 +106,9 @@ public class FullscreenBlitBlitterRendererFeature : ScriptableRendererFeature
 #if UNITY_EDITOR
     public override void SetupRenderPasses(ScriptableRenderer renderer, in RenderingData renderingData)
     {
-        //if (renderingData.cameraData.isSceneViewCamera) {
+        if (renderingData.cameraData.cameraType != CameraType.Game) {
             this.renderPass.SetEditorCameraColorTarget(renderer.cameraColorTargetHandle);
-        //}
+        }
     }
 #endif
 
