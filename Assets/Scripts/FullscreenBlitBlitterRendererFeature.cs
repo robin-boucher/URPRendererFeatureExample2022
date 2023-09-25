@@ -18,6 +18,10 @@ public class FullscreenBlitBlitterRendererFeature : ScriptableRendererFeature
         // Temporary RTHandle for blit
         private RTHandle tempRTHandle;
 
+#if UNITY_EDITOR
+        private RTHandle editorCameraColorTargetHandle;
+#endif
+
         public FullscreenBlitBlitterRenderPass(RenderPassEvent renderPassEvent, Material material)
         {
             this.profilingSampler = new ProfilingSampler(nameof(FullscreenBlitBlitterRendererFeature));
@@ -26,6 +30,13 @@ public class FullscreenBlitBlitterRendererFeature : ScriptableRendererFeature
 
             this.renderPassEvent = renderPassEvent;
         }
+
+#if UNITY_EDITOR
+        public void SetEditorCameraColorTarget(RTHandle cameraColorTargetRTHandle)
+        {
+            this.editorCameraColorTargetHandle = cameraColorTargetRTHandle;
+        }
+#endif
 
         public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
         {
@@ -48,7 +59,14 @@ public class FullscreenBlitBlitterRendererFeature : ScriptableRendererFeature
                 cmd.Clear();
 
                 // Camera color render target
+#if UNITY_EDITOR
+                RTHandle cameraColorTargetRTHandle = renderingData.cameraData.cameraType == CameraType.Game
+                    ? renderingData.cameraData.renderer.cameraColorTargetHandle
+                    : this.editorCameraColorTargetHandle;
+                    
+#else
                 RTHandle cameraColorTargetRTHandle = renderingData.cameraData.renderer.cameraColorTargetHandle;
+#endif
 
                 // Use Blitter API to blit
                 // Blit cameraColor -> tempRT with material
@@ -84,6 +102,15 @@ public class FullscreenBlitBlitterRendererFeature : ScriptableRendererFeature
     {
         renderer.EnqueuePass(this.renderPass);
     }
+
+#if UNITY_EDITOR
+    public override void SetupRenderPasses(ScriptableRenderer renderer, in RenderingData renderingData)
+    {
+        //if (renderingData.cameraData.isSceneViewCamera) {
+            this.renderPass.SetEditorCameraColorTarget(renderer.cameraColorTargetHandle);
+        //}
+    }
+#endif
 
     protected override void Dispose(bool disposing)
     {
